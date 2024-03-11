@@ -160,17 +160,17 @@
             var skeleton = model.skeletons[0];
         
             // ROBOT
-            skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
-            skeleton.animationPropertiesOverride.enableBlending = true;
-            skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
-            skeleton.animationPropertiesOverride.loopMode = 1;
+            // skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
+            // skeleton.animationPropertiesOverride.enableBlending = true;
+            // skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
+            // skeleton.animationPropertiesOverride.loopMode = 1;
         
-            var idleRange = skeleton.getAnimationRange("YBot_Idle");
-            var walkRange = skeleton.getAnimationRange("YBot_Walk");
-            var runRange = skeleton.getAnimationRange("YBot_Run");
-            var leftRange = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-            var rightRange = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-            scene.beginAnimation(skeleton, idleRange.from, idleRange.to, true);
+            // var idleRange = skeleton.getAnimationRange("YBot_Idle");
+            // var walkRange = skeleton.getAnimationRange("YBot_Walk");
+            // var runRange = skeleton.getAnimationRange("YBot_Run");
+            // var leftRange = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
+            // var rightRange = skeleton.getAnimationRange("YBot_RightStrafeWalk");
+            // scene.beginAnimation(skeleton, idleRange.from, idleRange.to, true);
         
             let hitTest;
         
