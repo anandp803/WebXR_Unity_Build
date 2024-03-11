@@ -152,6 +152,7 @@
             //let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
             let b = ANote0Video;
             b.rotationQuaternion = new BABYLON.Quaternion();
+            b.scaling=new BABYLON.Vector3(0.1,0.2,0.1);
             // b.isVisible = false;
             shadowGenerator.addShadowCaster(b, true);
         
@@ -200,7 +201,7 @@
                     console.log('attaching', anchor);
                     b.isVisible = true;
                     anchor.attachedNode = b.clone("mensch");
-                    anchor.attachedNode.scaling=new BABYLON.Vector3(0.01,0.02,0.01);
+                    //anchor.attachedNode.scaling=new BABYLON.Vector3(0.01,0.02,0.01);
                     //anchor.attachedNode.skeleton = skeleton.clone('skelet');
                     shadowGenerator.addShadowCaster(anchor.attachedNode, true);
                     //scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
