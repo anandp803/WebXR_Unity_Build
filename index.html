@@ -129,7 +129,7 @@
 
             //ens here
         
-            const model = await BABYLON.SceneLoader.ImportMeshAsync("", "./scenes/", "dummy3.babylon", scene);
+            //const model = await BABYLON.SceneLoader.ImportMeshAsync("", "./scenes/", "dummy3.babylon", scene);
         
             var xr = await scene.createDefaultXRExperienceAsync({
                 uiOptions: {
@@ -157,7 +157,7 @@
             marker.isVisible = false;
             marker.rotationQuaternion = new BABYLON.Quaternion();
         
-            var skeleton = model.skeletons[0];
+           // var skeleton = model.skeletons[0];
         
             // ROBOT
             // skeleton.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
