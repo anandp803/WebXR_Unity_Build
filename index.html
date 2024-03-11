@@ -45,8 +45,10 @@
         </style>
     </head>
 <body>
-    <div id="canvasZone"><canvas id="renderCanvas"></canvas></div>
-    <script>
+    <div id="canvasZone"><canvas id="renderCanvas"></canvas>  
+    </div>    
+    <script src="./Scripts/WebAR.js"></script>
+    <!-- <script>
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -60,6 +62,7 @@
         var engine = null;
         var scene = null;
         var sceneToRender = null;
+        var isplaced=true;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
         /**
          * WebXR ar demo using hit-test, anchors, and plane detection.
@@ -101,25 +104,28 @@
             //adding plane in place of model
 
             var planeOpts = {
-			height: 1, 
-			width: 1, 
+			height: 4.5, 
+			width: 2.2, 
 			sideOrientation: BABYLON.Mesh.DOUBLESIDE
 	};
-        var ANote0Video = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
-        ANote0Video.scaling=new BABYLON.Vector3(0.01,0.02,0.01);
-        var vidPos = (new BABYLON.Vector3(0,0,0.1))
+        var ANote0Video = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);        
+        var vidPos = (new BABYLON.Vector3(0,0,0))
         ANote0Video.position = vidPos;
         var ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
         var ANote0VideoVidTex = new BABYLON.VideoTexture("vidtex","https://anandp803.github.io/VideoURL/AR%20Rahman%20alpha_Vp8_vorbis.webm", scene);
         ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
         ANote0VideoVidTex.hasAlpha=true;
-        ANote0VideoVidTex.video.muted=false;
+        ANote0VideoVidTex.video.muted=true;        
         ANote0VideoMat.roughness = 1;	
         ANote0VideoMat.emissiveColor = new BABYLON.Color3.White();
         ANote0Video.material = ANote0VideoMat;
+        scene.onPointerDown = function () {
+            videoTexture.video.play();
+            scene.onPointerDown = null;
+        };
         scene.onPointerObservable.add(function(evt){
                 if(evt.pickInfo.pickedMesh === ANote0Video){
-                    //console.log("picked");
+                    console.log("picked");
                         if(ANote0VideoVidTex.video.paused)
                             ANote0VideoVidTex.video.play();
                         else
@@ -129,7 +135,30 @@
         }, BABYLON.PointerEventTypes.POINTERPICK);
     //console.log(ANote0Video);
 
-            //ens here
+    //srtting Audio
+
+    // var context = new AudioContext;
+    // console.log(context)
+
+    // var gainNode = context.createGain();
+    // console.log(gainNode)
+
+    // var v1_src = context.createMediaElementSource(ANote0VideoVidTex.video)
+    // console.log(v1_src.mediaElement)
+
+    // gainNode.connect(context.destination);
+
+    
+
+    // let lowPassFilterNode = context.createBiquadFilter();
+    // lowPassFilterNode.type = "lowpass";
+    // lowPassFilterNode.frequency.value = 1200;
+    // lowPassFilterNode.gain.value = 1;
+
+    // v1_src.connect(lowPassFilterNode);
+    // lowPassFilterNode.connect(gainNode);
+
+    //end here
         
             //const model = await BABYLON.SceneLoader.ImportMeshAsync("", "./scenes/", "dummy3.babylon", scene);
         
@@ -151,8 +180,7 @@
         
             //let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
             let b = ANote0Video;
-            b.rotationQuaternion = new BABYLON.Quaternion(90,90,90);
-            b.scaling=new BABYLON.Vector3(0.1,0.2,0.1);
+            b.rotationQuaternion = new BABYLON.Quaternion();            
             // b.isVisible = false;
             shadowGenerator.addShadowCaster(b, true);
         
@@ -182,10 +210,9 @@
             xrTest.onHitTestResultObservable.add((results) => {
                 if (results.length) {
                     marker.isVisible = true;
-                    hitTest = results[0];
-                    hitTest.scaling=new BABYLON.Vector3(0.1,0.2,0.1);
-                    hitTest.transformationMatrix.decompose(hitTest.scaling, b.rotationQuaternion, b.position);
-                    hitTest.transformationMatrix.decompose(hitTest.scaling, marker.rotationQuaternion, marker.position);
+                    hitTest = results[0];                    
+                    hitTest.transformationMatrix.decompose(undefined, b.rotationQuaternion, b.position);
+                    hitTest.transformationMatrix.decompose(undefined, marker.rotationQuaternion, marker.position);
                 } else {
                     marker.isVisible = false;
                     hitTest = undefined;
@@ -201,8 +228,7 @@
                 anchors.onAnchorAddedObservable.add(anchor => {
                     console.log('attaching', anchor);
                     b.isVisible = true;
-                    anchor.attachedNode = b.clone("mensch");
-                    anchor.attachedNode.scaling=new BABYLON.Vector3(0.01,0.02,0.01);
+                    anchor.attachedNode = b.clone("mensch");                   
                     //anchor.attachedNode.skeleton = skeleton.clone('skelet');
                     shadowGenerator.addShadowCaster(anchor.attachedNode, true);
                     //scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
@@ -219,7 +245,8 @@
             }
         
             scene.onPointerDown = (evt, pickInfo) => {
-                if (hitTest && anchors && xr.baseExperience.state === BABYLON.WebXRState.IN_XR) {
+                if (hitTest && isplaced && anchors && xr.baseExperience.state === BABYLON.WebXRState.IN_XR) {
+                    isplaced=false;
                     anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
                 }
             }
@@ -234,10 +261,10 @@
                 //}
                 planes[plane.id] = (plane.mesh);
                 const mat = new BABYLON.StandardMaterial("mat", scene);
-                mat.alpha = 0.5;
+                mat.alpha = 0.1;
                 mat.diffuseColor = BABYLON.Color3.Random();
                 polygon.createNormals();
-                // polygon.receiveShadows = true;
+                polygon.receiveShadows = true;
                 plane.mesh.material = mat;
         
                 plane.mesh.rotationQuaternion = new BABYLON.Quaternion();
@@ -308,6 +335,6 @@
         window.addEventListener("resize", function () {
             engine.resize();
         });
-    </script>
+    </script> -->
 </body>
 </html>
