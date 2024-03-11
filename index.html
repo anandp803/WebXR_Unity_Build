@@ -184,8 +184,8 @@
                     marker.isVisible = true;
                     hitTest = results[0];
                     hitTest.scaling=new BABYLON.Vector3(0.1,0.2,0.1);
-                    hitTest.transformationMatrix.decompose(undefined, b.rotationQuaternion, b.position);
-                    hitTest.transformationMatrix.decompose(undefined, marker.rotationQuaternion, marker.position);
+                    hitTest.transformationMatrix.decompose(hitTest.scaling, b.rotationQuaternion, b.position);
+                    hitTest.transformationMatrix.decompose(hitTest.scaling, marker.rotationQuaternion, marker.position);
                 } else {
                     marker.isVisible = false;
                     hitTest = undefined;
