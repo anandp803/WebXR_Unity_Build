@@ -246,14 +246,14 @@ scene.onPointerObservable.add(function(evt){
 
     xrPlanes.onPlaneRemovedObservable.add(plane => {
         if (plane && planes[plane.id]) {
-            planes[plane.id].dispose();  
-            isplaced=true;        
+            planes[plane.id].dispose();                   
         }
     })
 
     xr.baseExperience.sessionManager.onXRSessionInit.add(() => {
         planes.forEach(plane => plane.dispose());
-        while (planes.pop()) { };        
+        while (planes.pop()) { };  
+        isplaced=true;      
     });
 
 
