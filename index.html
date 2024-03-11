@@ -97,6 +97,37 @@
             var shadowGenerator = new BABYLON.ShadowGenerator(1024, dirLight);
             shadowGenerator.useBlurExponentialShadowMap = true;
             shadowGenerator.blurKernel = 32;
+
+            //adding plane in place of model
+
+            var planeOpts = {
+			height: 5.4762, 
+			width: 7.3967, 
+			sideOrientation: BABYLON.Mesh.DOUBLESIDE
+	};
+        var ANote0Video = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);
+        var vidPos = (new BABYLON.Vector3(0,0,0.1))
+        ANote0Video.position = vidPos;
+        var ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
+        var ANote0VideoVidTex = new BABYLON.VideoTexture("vidtex","https://anandp803.github.io/VideoURL/AR%20Rahman%20alpha_Vp8_vorbis.webm", scene);
+        ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
+        ANote0VideoVidTex.hasAlpha=true;
+        ANote0VideoMat.roughness = 1;	
+        ANote0VideoMat.emissiveColor = new BABYLON.Color3.White();
+        ANote0Video.material = ANote0VideoMat;
+        scene.onPointerObservable.add(function(evt){
+                if(evt.pickInfo.pickedMesh === ANote0Video){
+                    //console.log("picked");
+                        if(ANote0VideoVidTex.video.paused)
+                            ANote0VideoVidTex.video.play();
+                        else
+                            ANote0VideoVidTex.video.pause();
+                        console.log(ANote0VideoVidTex.video.paused?"paused":"playing");
+                }
+        }, BABYLON.PointerEventTypes.POINTERPICK);
+    //console.log(ANote0Video);
+
+            //ens here
         
             const model = await BABYLON.SceneLoader.ImportMeshAsync("", "./scenes/", "dummy3.babylon", scene);
         
@@ -116,7 +147,8 @@
         
             const xrBackgroundRemover = fm.enableFeature(BABYLON.WebXRBackgroundRemover.Name);
         
-            let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
+            //let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
+            let b = ANote0Video.meshes[0];
             b.rotationQuaternion = new BABYLON.Quaternion();
             // b.isVisible = false;
             shadowGenerator.addShadowCaster(b, true);
