@@ -198,9 +198,9 @@
                     console.log('attaching', anchor);
                     b.isVisible = true;
                     anchor.attachedNode = b.clone("mensch");
-                    anchor.attachedNode.skeleton = skeleton.clone('skelet');
+                    //anchor.attachedNode.skeleton = skeleton.clone('skelet');
                     shadowGenerator.addShadowCaster(anchor.attachedNode, true);
-                    scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
+                    //scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
                     b.isVisible = false;
                 })
         
