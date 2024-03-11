@@ -155,7 +155,7 @@
             // b.isVisible = false;
             shadowGenerator.addShadowCaster(b, true);
         
-            const marker = BABYLON.MeshBuilder.CreateTorus('marker', { diameter: 0.15, thickness: 0.05 });
+            const marker = BABYLON.MeshBuilder.CreateTorus('marker', { diameter: 0.015, thickness: 0.005 });
             marker.isVisible = false;
             marker.rotationQuaternion = new BABYLON.Quaternion();
         
@@ -200,6 +200,7 @@
                     console.log('attaching', anchor);
                     b.isVisible = true;
                     anchor.attachedNode = b.clone("mensch");
+                    anchor.attachedNode.scaling=new BABYLON.Vector3(0.01,0.02,0.01);
                     //anchor.attachedNode.skeleton = skeleton.clone('skelet');
                     shadowGenerator.addShadowCaster(anchor.attachedNode, true);
                     //scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
