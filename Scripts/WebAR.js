@@ -1,6 +1,11 @@
 
 var canvas = document.getElementById("renderCanvas");
+var ARbtn=document.getElementById("ARbtn");
 
+ARbtn.addEventListener("click" ,function(){
+    var AR=document.querySelector(".babylonVRicon");
+    AR.click();
+});
 var startRenderLoop = function (engine, canvas) {
     engine.runRenderLoop(function () {
         if (sceneToRender && sceneToRender.activeCamera) {
@@ -24,8 +29,7 @@ var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, {
  * Created by Raanan Weber (@RaananW)
  */
 
-var createScene = async function () {
-
+var createScene = async function () {    
     // This creates a basic Babylon Scene object (non-mesh)
     var scene = new BABYLON.Scene(engine);
 
@@ -54,33 +58,64 @@ var createScene = async function () {
     //adding plane in place of model
 
     var planeOpts = {
-    height: 4.5, 
-    width: 2.2, 
+    height:2, 
+    width:1, 
     sideOrientation: BABYLON.Mesh.DOUBLESIDE
 };
-var ANote0Video = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);        
-var vidPos = (new BABYLON.Vector3(0,0,0.1));
-ANote0Video.position = vidPos;
+var ANote0Video = BABYLON.MeshBuilder.CreatePlane("plane", planeOpts, scene);  
+ANote0Video.setPivotPoint(new BABYLON.Vector3(0, -0.8, 0));      
+//var vidPos = (new BABYLON.Vector3(0,0,0.1));
+//ANote0Video.position = vidPos;
 var ANote0VideoMat = new BABYLON.StandardMaterial("m", scene);
 var ANote0VideoVidTex = new BABYLON.VideoTexture("vidtex","https://anandp803.github.io/VideoURL/AR%20Rahman%20alpha_Vp8_vorbis.webm", scene);
 ANote0VideoMat.diffuseTexture = ANote0VideoVidTex;
 ANote0VideoVidTex.hasAlpha=true;
-ANote0VideoVidTex.video.muted=false;        
+ANote0VideoVidTex.video.muted=false; 
+ANote0VideoVidTex.video.stop      
 ANote0VideoMat.roughness = 1;	
 ANote0VideoMat.emissiveColor = new BABYLON.Color3.White();
 ANote0Video.material = ANote0VideoMat;
-scene.onPointerDown = function () {
-    videoTexture.video.play();
-    scene.onPointerDown = null;
-};
+
+//  // GUI
+//  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+//  var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Click Me");
+//  button1.width = "150px"
+//  button1.height = "40px";
+//  button1.color = "white";
+//  button1.cornerRadius = 20;
+//  button1.background = "green";
+//  button1.onPointerUpObservable.add(function() {     
+//      //ANote0VideoVidTex.video.play();
+//  });
+//  advancedTexture.addControl(button1); 
+
+
+ //Added click on video mesh
+ ANote0Video.actionManager = new BABYLON.ActionManager(scene);
+ ANote0Video.actionManager.registerAction(new BABYLON.ExecuteCodeAction(
+    BABYLON.ActionManager.OnPickTrigger, 
+    function (evt) {
+        const videoplane = evt.meshUnderPointer;
+        //ANote0VideoVidTex.video.play();
+        if(evt.pickInfo.pickedMesh === ANote0Video){
+            console.log("picked");
+                //if(ANote0VideoVidTex.video.paused)
+                   // ANote0VideoVidTex.video.play();
+               // else
+                    //ANote0VideoVidTex.video.pause();
+                //console.log(ANote0VideoVidTex.video.paused?"paused":"playing");
+        }
+    }));
+   
 scene.onPointerObservable.add(function(evt){
         if(evt.pickInfo.pickedMesh === ANote0Video){
             console.log("picked");
-                if(ANote0VideoVidTex.video.paused)
-                    ANote0VideoVidTex.video.play();
-                else
-                    ANote0VideoVidTex.video.pause();
-                console.log(ANote0VideoVidTex.video.paused?"paused":"playing");
+                // if(ANote0VideoVidTex.video.paused)
+                //     ANote0VideoVidTex.video.play();
+                // else
+                //     ANote0VideoVidTex.video.pause();
+                // console.log(ANote0VideoVidTex.video.paused?"paused":"playing");
         }
 }, BABYLON.PointerEventTypes.POINTERPICK);
 //console.log(ANote0Video);
@@ -130,8 +165,10 @@ scene.onPointerObservable.add(function(evt){
 
     //let b = model.meshes[0];//BABYLON.CylinderBuilder.CreateCylinder('cylinder', { diameterBottom: 0.2, diameterTop: 0.4, height: 0.5 });
     let b = ANote0Video;
-    b.rotationQuaternion = new BABYLON.Quaternion();            
-    // b.isVisible = false;
+    b.rotationQuaternion = new BABYLON.Quaternion();
+   
+               
+    b.isVisible = false;
     shadowGenerator.addShadowCaster(b, true);
 
     const marker = BABYLON.MeshBuilder.CreateTorus('marker', { diameter: 0.15, thickness: 0.05 });
@@ -160,7 +197,8 @@ scene.onPointerObservable.add(function(evt){
     xrTest.onHitTestResultObservable.add((results) => {
         if (results.length) {
             marker.isVisible = true;
-            hitTest = results[0];                    
+            hitTest = results[0];     
+            //console.log("-1===",b.position)           
             hitTest.transformationMatrix.decompose(undefined, b.rotationQuaternion, b.position);
             hitTest.transformationMatrix.decompose(undefined, marker.rotationQuaternion, marker.position);
         } else {
@@ -168,6 +206,12 @@ scene.onPointerObservable.add(function(evt){
             hitTest = undefined;
         }
     });
+
+    anchors.onAnchorAddedObservable.add((anchor) => {
+        // ... do what you want with the anchor after it was added
+               
+      });
+
     const mat1 = new BABYLON.StandardMaterial('1', scene);
     mat1.diffuseColor = BABYLON.Color3.Red();
     const mat2 = new BABYLON.StandardMaterial('1', scene);
@@ -177,12 +221,14 @@ scene.onPointerObservable.add(function(evt){
         console.log('anchors attached');
         anchors.onAnchorAddedObservable.add(anchor => {
             console.log('attaching', anchor);
-            b.isVisible = true;
-            anchor.attachedNode = b.clone("mensch");                   
+            b.isVisible = true;           
+            anchor.attachedNode = b.clone("mensch"); 
+           // anchor.attachedNode.position              
+          
             //anchor.attachedNode.skeleton = skeleton.clone('skelet');
             shadowGenerator.addShadowCaster(anchor.attachedNode, true);
             //scene.beginAnimation(anchor.attachedNode.skeleton, idleRange.from, idleRange.to, true);
-            b.isVisible = false;
+            b.isVisible = false;    
         })
 
         anchors.onAnchorRemovedObservable.add(anchor => {
@@ -196,7 +242,7 @@ scene.onPointerObservable.add(function(evt){
 
     scene.onPointerDown = (evt, pickInfo) => {
         if (hitTest && isplaced && anchors && xr.baseExperience.state === BABYLON.WebXRState.IN_XR) {
-            isplaced=false;
+            //isplaced=false;   
             anchors.addAnchorPointUsingHitTestResultAsync(hitTest);
         }
     }
@@ -253,7 +299,7 @@ scene.onPointerObservable.add(function(evt){
     xr.baseExperience.sessionManager.onXRSessionInit.add(() => {
         planes.forEach(plane => plane.dispose());
         while (planes.pop()) { };  
-        isplaced=true;      
+        //isplaced=true;      
     });
 
 
