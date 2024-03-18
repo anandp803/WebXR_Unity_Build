@@ -114,18 +114,28 @@ AbtnInsideAR.onPointerClickObservable.add(() => {
 
     //const model = await BABYLON.SceneLoader.ImportMeshAsync("", "./scenes/", "dummy3.babylon", scene);
 
+    const supported = await navigator.xr.isSessionSupported('immersive-ar');
+        if (supported) {
+        // 'immersive-vr' sessions may be supported.
+        // Page should advertise support to the user.
+            console.log("WebXR is supported");
+        } else {
+        // 'immersive-vr' sessions are not supported.
+        console.log("WebXR is not supported");            
+        }   
+
     var xr = await scene.createDefaultXRExperienceAsync({
         uiOptions: {
             sessionMode: "immersive-ar",
-            referenceSpaceType: "local-floor"
+            //referenceSpaceType: "local-floor"
         },
-        optionalFeatures: true
+        optionalFeatures: ["hit-test", "anchors"]
     });
 
     const fm = xr.baseExperience.featuresManager;
 
     const xrTest = fm.enableFeature(BABYLON.WebXRHitTest.Name, "latest");
-    const xrPlanes = fm.enableFeature(BABYLON.WebXRPlaneDetector.Name, "latest");
+    //const xrPlanes = fm.enableFeature(BABYLON.WebXRPlaneDetector.Name, "latest");
     const anchors = fm.enableFeature(BABYLON.WebXRAnchorSystem.Name, 'latest');    
    
 
@@ -219,60 +229,60 @@ AbtnInsideAR.onPointerClickObservable.add(() => {
     //     }
     // })
 
-    const planes = [];
+    //const planes = [];
 
-    xrPlanes.onPlaneAddedObservable.add(plane => {
-        plane.polygonDefinition.push(plane.polygonDefinition[0]);
-        var polygon_triangulation = new BABYLON.PolygonMeshBuilder("name", plane.polygonDefinition.map((p) => new BABYLON.Vector2(p.x, p.z)), scene);
-        var polygon = polygon_triangulation.build(false, 0.01);
-        plane.mesh = polygon; //BABYLON.TubeBuilder.CreateTube("tube", { path: plane.polygonDefinition, radius: 0.02, sideOrientation: BABYLON.Mesh.FRONTSIDE, updatable: true }, scene);
-        //}
-        planes[plane.id] = (plane.mesh);
-        const mat = new BABYLON.StandardMaterial("mat", scene);
-        mat.alpha = 0.1;
-        mat.diffuseColor = BABYLON.Color3.Random();
-        polygon.createNormals();
-        polygon.receiveShadows = true;
-        plane.mesh.material = mat;
+    // xrPlanes.onPlaneAddedObservable.add(plane => {
+    //     plane.polygonDefinition.push(plane.polygonDefinition[0]);
+    //     var polygon_triangulation = new BABYLON.PolygonMeshBuilder("name", plane.polygonDefinition.map((p) => new BABYLON.Vector2(p.x, p.z)), scene);
+    //     var polygon = polygon_triangulation.build(false, 0.01);
+    //     plane.mesh = polygon; //BABYLON.TubeBuilder.CreateTube("tube", { path: plane.polygonDefinition, radius: 0.02, sideOrientation: BABYLON.Mesh.FRONTSIDE, updatable: true }, scene);
+    //     //}
+    //     planes[plane.id] = (plane.mesh);
+    //     const mat = new BABYLON.StandardMaterial("mat", scene);
+    //     mat.alpha = 0.1;
+    //     mat.diffuseColor = BABYLON.Color3.Random();
+    //     polygon.createNormals();
+    //     polygon.receiveShadows = true;
+    //     plane.mesh.material = mat;
 
-        plane.mesh.rotationQuaternion = new BABYLON.Quaternion();
-        plane.transformationMatrix.decompose(plane.mesh.scaling, plane.mesh.rotationQuaternion, plane.mesh.position);
-    });
+    //     plane.mesh.rotationQuaternion = new BABYLON.Quaternion();
+    //     plane.transformationMatrix.decompose(plane.mesh.scaling, plane.mesh.rotationQuaternion, plane.mesh.position);
+    // });
 
-    xrPlanes.onPlaneUpdatedObservable.add(plane => {
-        let mat;
-        if (plane.mesh) {
-            mat = plane.mesh.material;
-            plane.mesh.dispose(false, false);
-        }
-        const some = plane.polygonDefinition.some(p => !p);
-        if (some) {
-            return;
-        }
-        plane.polygonDefinition.push(plane.polygonDefinition[0]);
-        var polygon_triangulation = new BABYLON.PolygonMeshBuilder("name", plane.polygonDefinition.map((p) => new BABYLON.Vector2(p.x, p.z)), scene);
-        var polygon = polygon_triangulation.build(false, 0.01);
-        polygon.createNormals();
-        plane.mesh = polygon;// BABYLON.TubeBuilder.CreateTube("tube", { path: plane.polygonDefinition, radius: 0.02, sideOrientation: BABYLON.Mesh.FRONTSIDE, updatable: true }, scene);
-        //}
-        planes[plane.id] = (plane.mesh);
-        plane.mesh.material = mat;
-        plane.mesh.rotationQuaternion = new BABYLON.Quaternion();
-        plane.transformationMatrix.decompose(plane.mesh.scaling, plane.mesh.rotationQuaternion, plane.mesh.position);
-        plane.mesh.receiveShadows = true;
-    })
+    // xrPlanes.onPlaneUpdatedObservable.add(plane => {
+    //     let mat;
+    //     if (plane.mesh) {
+    //         mat = plane.mesh.material;
+    //         plane.mesh.dispose(false, false);
+    //     }
+    //     const some = plane.polygonDefinition.some(p => !p);
+    //     if (some) {
+    //         return;
+    //     }
+    //     plane.polygonDefinition.push(plane.polygonDefinition[0]);
+    //     var polygon_triangulation = new BABYLON.PolygonMeshBuilder("name", plane.polygonDefinition.map((p) => new BABYLON.Vector2(p.x, p.z)), scene);
+    //     var polygon = polygon_triangulation.build(false, 0.01);
+    //     polygon.createNormals();
+    //     plane.mesh = polygon;// BABYLON.TubeBuilder.CreateTube("tube", { path: plane.polygonDefinition, radius: 0.02, sideOrientation: BABYLON.Mesh.FRONTSIDE, updatable: true }, scene);
+    //     //}
+    //     planes[plane.id] = (plane.mesh);
+    //     plane.mesh.material = mat;
+    //     plane.mesh.rotationQuaternion = new BABYLON.Quaternion();
+    //     plane.transformationMatrix.decompose(plane.mesh.scaling, plane.mesh.rotationQuaternion, plane.mesh.position);
+    //     plane.mesh.receiveShadows = true;
+    // })
 
-    xrPlanes.onPlaneRemovedObservable.add(plane => {
-        if (plane && planes[plane.id]) {
-            planes[plane.id].dispose();
-            console.log("onPlaneRemovedObservable")
+    // xrPlanes.onPlaneRemovedObservable.add(plane => {
+    //     if (plane && planes[plane.id]) {
+    //         planes[plane.id].dispose();
+    //         console.log("onPlaneRemovedObservable")
 
-        }
-    })
+    //     }
+    // })
 
     xr.baseExperience.sessionManager.onXRSessionInit.add(() => {
-        planes.forEach(plane => plane.dispose());
-        while (planes.pop()) { };
+        // planes.forEach(plane => plane.dispose());
+        // while (planes.pop()) { };
         AbtnInsideAR.isVisible=true;      
         marker.isVisible = true;
         console.log("xr.baseExperience.sessionManager.onXRSessionInit.add(()")
